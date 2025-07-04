@@ -19,14 +19,16 @@ function calculateSimpleRevenue(purchase, _product) {
  */
 function calculateBonusByProfit(index, total, seller) {
     // @TODO: Расчет бонуса от позиции в рейтинге
+    const profit = seller.profit;
+
     if (index === 0) {
-        return 15;
-      } else if (index === 1 || index === 2) {
-        return 10; // 10% для 2 и 3 места
-    } else if (index === total - 1) {
-        return 0; // 0% для последнего
-    } else {
-        return 5; // 5% для остальных
+            return +(profit * 0.15).toFixed(2);
+        } else if (index === 1 || index === 2) {
+            return +(profit * 0.10).toFixed(2);
+        } else if (index === total - 1) {
+            return 0;
+        } else {
+            return +(profit * 0.05).toFixed(2);
     };
 }
 
@@ -50,9 +52,13 @@ function analyzeSalesData(data, options) {
     };
 
     // @TODO: Проверка наличия опций
-    if (typeof options !== "object") {
-        throw new Error('Опция - не объект');
-    }
+    if (
+        typeof options !== "object" ||
+        typeof options.calculateRevenue !== "function" ||
+        typeof options.calculateBonus !== "function"
+    ) {
+        throw new Error('Некорректные опции: нужны функции calculateRevenue и calculateBonus');
+    };
 
     // @TODO: Подготовка промежуточных данных для сбора статистики
     const sellerStats = data.sellers.map(seller => ({
